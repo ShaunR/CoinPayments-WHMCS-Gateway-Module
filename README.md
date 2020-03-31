@@ -1,0 +1,12 @@
+## CoinPayments.Net WHMCS Payment Gateway Module
+
+CoinPayments.net is a popular platform used for accepting multiple crypto currencies.
+
+### How is this module different from the official module?
+CoinPayments does have an official WHMCS payment gateway module you can use, however this module has multiple issues and one of them is pretty serious!
+
+### Payment conversion verification
+The official CoinPayments WHMCS module has one major issue! A malicious payee can trick WHMCS into thinking a full payment was made when in fact it was not.  This is done by a malicious payee modifying the payment link changing the currency conversion from the set FIAT currency to different cryptocurrency. So for example an order is placed and the invoice is due for $10 USD.  The payment link provided sends the payee to CoinPayments where the payee is given multiple cryptocurrencies to choose from. The payee chooses Bitcoin and since the payment link instructed CoinPayments to convert to USD they must now send $10 USD worth of BTC. Now here is the tricky part.  The payee can modify the link to CoinPayments telling the system to convert to a different currency.  The payee modifies the link to convert the payment to a extremely low priced alt coin. Now they only need to send enough BTC to convert to 10 of that alt coin. Once payment is made CoinPayment them sends the payment details to the CoinPayments WHMCS IPN callback. Since this callback does not do any checking to ensure the converted currency is the same as what was passed it just records that it received 10 and now that invoice is marked PAID.  If that alt coin was worth $0.01 they only needed to send you $0.1 worth of BTC to complete the payment! So rather than you receiving $10 USD worth of crypto, you've now only really received $0.10 USD! This module prevents this by checking to ensure that the conversion currency matches the original set currency.
+
+###  Transactions Logs
+If you have used the official CoinPayments module you pay of noticed that the results dropdown in the gateway log is flooded with options to choose from.  This is because the official CoinPayments module does not standardize it's transaction logging and is adding a unique result for each transaction received.  So if you've received 100 crypto payments, that dropdown now has at least 100 options. This module does not do that and you see results like 'Payment Pending', 'Payment Received', 'Payment Confirmed', 'Payment Completed'.
